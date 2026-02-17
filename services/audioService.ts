@@ -11,6 +11,14 @@ class AudioService {
     }
   }
 
+  // Release hardware resources
+  close() {
+    if (this.ctx) {
+      this.ctx.close().catch(e => console.error("Error closing AudioContext:", e));
+      this.ctx = null;
+    }
+  }
+
   playThud() {
     this.init();
     if (!this.ctx) return;
@@ -58,21 +66,22 @@ class AudioService {
     const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
     
     notes.forEach((freq, i) => {
-      const osc = this.ctx!.createOscillator();
-      const gain = this.ctx!.createGain();
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
       
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now + i * 0.1);
       
       gain.gain.setValueAtTime(0, now + i * 0.1);
       gain.gain.linearRampToValueAtTime(0.1, now + i * 0.1 + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.3);
       
       osc.connect(gain);
-      gain.connect(this.ctx!.destination);
+      gain.connect(this.ctx.destination);
       
       osc.start(now + i * 0.1);
-      osc.stop(now + i * 0.1 + 0.5);
+      osc.stop(now + i * 0.1 + 0.3);
     });
   }
 }

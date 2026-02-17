@@ -1,7 +1,5 @@
 {
   "name": "The Sovereign Soul Workout",
   "description": "An intense discipline-focused workout app featuring high-volume bodyweight exercises, progress tracking, and elite timed challenges for the soul.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "requestFramePermissions": []
 }
