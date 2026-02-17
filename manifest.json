@@ -1,0 +1,19 @@
+
+{
+  "name": "Sovereign Soul Workout",
+  "short_name": "Sovereign Soul",
+  "description": "Forging unbreakable spirits through intense discipline and volume.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2964/2964514.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
