@@ -176,22 +176,30 @@ const ExerciseCard: React.FC<Props> = ({ exercise, progress, onUpdate, isWarmup 
                   </span>
                 </button>
                 
-                {!isWarmup && (
-                  <div className="grid grid-cols-2 gap-3">
-                    <button 
-                      onClick={() => handleBulkAdd(10)} 
-                      className="py-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-xl text-[10px] font-black tracking-widest uppercase transition-colors"
-                    >
-                      +10 REPS
-                    </button>
-                    <button 
-                      onClick={() => handleBulkAdd(50)} 
-                      className="py-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-xl text-[10px] font-black tracking-widest uppercase transition-colors"
-                    >
-                      +50 REPS
-                    </button>
-                  </div>
-                )}
+                <div className="grid grid-cols-2 gap-3">
+                  <button 
+                    onClick={() => handleBulkAdd(10)} 
+                    disabled={isWarmup && isAtTarget}
+                    className={`py-4 border rounded-xl text-[10px] font-black tracking-widest uppercase transition-colors ${
+                      isWarmup && isAtTarget
+                        ? 'bg-slate-800/20 border-slate-900 text-slate-700 opacity-50 cursor-not-allowed'
+                        : 'bg-slate-800/50 hover:bg-slate-800 border-slate-700 text-slate-300'
+                    }`}
+                  >
+                    +10 REPS
+                  </button>
+                  <button 
+                    onClick={() => handleBulkAdd(50)} 
+                    disabled={isWarmup && isAtTarget}
+                    className={`py-4 border rounded-xl text-[10px] font-black tracking-widest uppercase transition-colors ${
+                      isWarmup && isAtTarget
+                        ? 'bg-slate-800/20 border-slate-900 text-slate-700 opacity-50 cursor-not-allowed'
+                        : 'bg-slate-800/50 hover:bg-slate-800 border-slate-700 text-slate-300'
+                    }`}
+                  >
+                    +50 REPS
+                  </button>
+                </div>
               </div>
             ) : (
               <button
