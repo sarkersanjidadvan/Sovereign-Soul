@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #000000;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -43,20 +43,56 @@
         #root { display: flex; flex-direction: column; min-height: 100vh; position: relative; }
         .font-oswald { font-family: 'Oswald', sans-serif; }
         
-        /* Theme Global Overrides */
+        /* Neon Splash Screen Styling */
+        #initial-loader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #000000;
+            z-index: 99999;
+        }
+
+        .splash-text {
+            font-family: 'Oswald', sans-serif;
+            color: #ffb86c;
+            font-size: 28px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-style: italic;
+            text-align: center;
+            text-shadow: 
+                0 0 5px #ff4500,
+                0 0 10px #ff4500,
+                0 0 20px #ff4500,
+                0 0 40px #d35400;
+            animation: neonPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes neonPulse {
+            0%, 100% { opacity: 0.7; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Theme Global Engine */
         .rest-mode { --accent: #3b82f6; --accent-glow: rgba(59, 130, 246, 0.6); }
         .soulless-mode { --accent: #ef4444; --accent-glow: rgba(239, 68, 68, 0.6); }
 
-        /* Global Theme Engine */
-        .soulless-mode [class*="bg-orange-"] { background-color: var(--accent) !important; }
-        .soulless-mode [class*="text-orange-"] { color: var(--accent) !important; }
-        .soulless-mode [class*="border-orange-"] { border-color: var(--accent) !important; }
-        .soulless-mode [class*="shadow-orange-"] { --tw-shadow-color: var(--accent-glow) !important; box-shadow: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color) !important; }
-        
-        .rest-mode [class*="bg-orange-"] { background-color: var(--accent) !important; }
-        .rest-mode [class*="text-orange-"] { color: var(--accent) !important; }
-        .rest-mode [class*="border-orange-"] { border-color: var(--accent) !important; }
+        /* Sophisticated UI Overrides for Theme Modes */
+        .soulless-mode .bg-orange-500 { background-color: #ef4444 !important; }
+        .soulless-mode .bg-orange-600 { background-color: #dc2626 !important; }
+        .soulless-mode .text-orange-400, .soulless-mode .text-orange-500 { color: #f87171 !important; }
+        .soulless-mode .border-orange-400, .soulless-mode .border-orange-500, .soulless-mode .border-orange-600 { border-color: #ef4444 !important; }
+        .soulless-mode i { filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.4)); }
 
+        .rest-mode .bg-orange-500 { background-color: #3b82f6 !important; }
+        .rest-mode .bg-orange-600 { background-color: #2563eb !important; }
+        .rest-mode .text-orange-400, .rest-mode .text-orange-500 { color: #60a5fa !important; }
+        .rest-mode .border-orange-400, .rest-mode .border-orange-500, .rest-mode .border-orange-600 { border-color: #3b82f6 !important; }
+        
         /* Blipper Blipping Effect */
         .accent-pulse-glow {
             background-color: var(--accent);
@@ -126,7 +162,11 @@
 }
 </script>
 </head>
-<body>
-    <div id="root"></div>
+<body style="background-color: #000000;">
+    <div id="root">
+        <div id="initial-loader">
+            <div class="splash-text">SOVEREIGN SOUL</div>
+        </div>
+    </div>
 </body>
 </html>
