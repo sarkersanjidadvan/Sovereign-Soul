@@ -23,7 +23,7 @@
             --accent-glow: rgba(249, 115, 22, 0.6);
             --slate-950: #020617;
             --slate-900: #0f172a;
-            scroll-behavior: smooth;
+            scroll-behavior: auto;
         }
 
         body {
@@ -81,19 +81,41 @@
         .rest-mode { --accent: #3b82f6; --accent-glow: rgba(59, 130, 246, 0.6); }
         .soulless-mode { --accent: #ef4444; --accent-glow: rgba(239, 68, 68, 0.6); }
 
-        /* Sophisticated UI Overrides for Theme Modes */
+        /* Soulless Mode Overrides (Red) */
         .soulless-mode .bg-orange-500 { background-color: #ef4444 !important; }
         .soulless-mode .bg-orange-600 { background-color: #dc2626 !important; }
-        .soulless-mode .text-orange-400, .soulless-mode .text-orange-500 { color: #f87171 !important; }
-        .soulless-mode .border-orange-400, .soulless-mode .border-orange-500, .soulless-mode .border-orange-600 { border-color: #ef4444 !important; }
-        .soulless-mode i { filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.4)); }
+        .soulless-mode .bg-orange-600\/10 { background-color: rgba(239, 68, 68, 0.1) !important; }
+        .soulless-mode .bg-orange-500\/10 { background-color: rgba(239, 68, 68, 0.1) !important; }
+        .soulless-mode .bg-orange-900\/20 { background-color: rgba(153, 27, 27, 0.2) !important; }
+        .soulless-mode .text-orange-400, 
+        .soulless-mode .text-orange-500 { color: #f87171 !important; }
+        .soulless-mode .border-orange-400, 
+        .soulless-mode .border-orange-500, 
+        .soulless-mode .border-orange-600,
+        .soulless-mode .border-orange-500\/20,
+        .soulless-mode .border-orange-500\/40,
+        .soulless-mode .border-orange-600\/30 { border-color: rgba(239, 68, 68, 0.3) !important; }
+        
+        /* Apply thematic glow to icons in modes without forcing white */
+        .soulless-mode i { filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.4)); }
+        .rest-mode i { filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4)); }
 
+        /* Rest Mode Overrides (Blue) */
         .rest-mode .bg-orange-500 { background-color: #3b82f6 !important; }
         .rest-mode .bg-orange-600 { background-color: #2563eb !important; }
-        .rest-mode .text-orange-400, .rest-mode .text-orange-500 { color: #60a5fa !important; }
-        .rest-mode .border-orange-400, .rest-mode .border-orange-500, .rest-mode .border-orange-600 { border-color: #3b82f6 !important; }
-        
-        /* Blipper Blipping Effect */
+        .rest-mode .bg-orange-600\/10 { background-color: rgba(59, 130, 246, 0.1) !important; }
+        .rest-mode .bg-orange-500\/10 { background-color: rgba(59, 130, 246, 0.1) !important; }
+        .rest-mode .bg-orange-900\/20 { background-color: rgba(30, 58, 138, 0.2) !important; }
+        .rest-mode .text-orange-400, 
+        .rest-mode .text-orange-500 { color: #60a5fa !important; }
+        .rest-mode .border-orange-400, 
+        .rest-mode .border-orange-500, 
+        .rest-mode .border-orange-600,
+        .rest-mode .border-orange-500\/20,
+        .rest-mode .border-orange-500\/40,
+        .rest-mode .border-orange-600\/30 { border-color: rgba(59, 130, 246, 0.3) !important; }
+
+        /* Blipper Effect */
         .accent-pulse-glow {
             background-color: var(--accent);
             box-shadow: 0 0 12px var(--accent-glow);
@@ -108,48 +130,30 @@
             animation: blipperPulse 2.5s ease-in-out infinite;
         }
 
-        /* High-Performance Smooth Overlay */
-        .overlay-container {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            pointer-events: none;
-            contain: strict;
-        }
-
-        .overlay-icon-wrap {
-            will-change: transform, opacity;
-            transform: translateZ(0); 
+        /* Hardware Accelerated Container */
+        main { 
+            padding-bottom: 140px; 
+            transform: translateZ(0);
             backface-visibility: hidden;
-            animation: iconEnter 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
-
-        @keyframes iconEnter {
-            0% { transform: scale(0.1) rotate(-15deg); opacity: 0; }
-            12% { transform: scale(1.1) rotate(0deg); opacity: 1; }
-            20% { transform: scale(1) rotate(0deg); opacity: 1; }
-            85% { transform: scale(1) rotate(0deg); opacity: 1; }
-            100% { transform: scale(0.85) rotate(5deg); opacity: 0; }
+        
+        .tab-content { 
+            animation: pageEntry 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            will-change: transform, opacity;
         }
-
-        main { padding-bottom: 140px; }
-        .tab-content { animation: pageEntry 0.4s ease-out; }
+        
         @keyframes pageEntry {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .bounce-in { animation: bounceBtn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .bounce-in { animation: bounceBtn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         @keyframes bounceBtn {
             0% { transform: scale(0); }
-            60% { transform: scale(1.15); }
             100% { transform: scale(1); }
         }
         
-        button:active { transform: scale(0.92); }
+        button:active { transform: scale(0.96); transition: transform 0.1s ease; }
     </style>
 <script type="importmap">
 {

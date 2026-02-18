@@ -13,12 +13,13 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onExit }) => {
     <button 
       key={tab}
       onClick={() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Using instant scroll for faster perceived performance during tab transitions
+        window.scrollTo({ top: 0, behavior: 'auto' });
         setActiveTab(tab);
       }}
-      className={`py-4 rounded-2xl font-oswald text-[11px] uppercase italic border transition-all duration-300 flex items-center justify-center ${
+      className={`py-4 rounded-2xl font-oswald text-[11px] uppercase italic border transition-all duration-200 flex items-center justify-center ${
         activeTab === tab 
-          ? 'bg-orange-600 border-orange-400 text-white shadow-lg shadow-orange-900/20 translate-y-[-2px]' 
+          ? 'bg-orange-600 border-orange-400 text-white shadow-lg shadow-orange-900/20 translate-y-[-1px]' 
           : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'
       }`}
     >

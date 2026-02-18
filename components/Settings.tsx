@@ -62,7 +62,8 @@ const Settings: React.FC<Props> = ({ stats, onResetData }) => {
               <a 
                 href="https://www.youtube.com/@sarkersanjidadvanevan" 
                 target="_blank" 
-                rel="noopener noreferrer"
+                rel="external noopener noreferrer"
+                title="Open YouTube Channel"
                 className="inline-flex items-center gap-3 px-6 py-3 bg-red-600/10 hover:bg-red-600/20 border border-red-600/30 rounded-xl text-red-500 transition-all group"
               >
                 <i className="fa-brands fa-youtube text-lg group-hover:scale-110 transition-transform"></i>

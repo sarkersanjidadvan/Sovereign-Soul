@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { UserStats } from '../types';
 import { EXERCISES } from '../constants';
 
@@ -16,19 +16,23 @@ const HistoryLog: React.FC<Props> = ({ stats }) => {
     return () => clearInterval(timer);
   }, []);
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const today = new Date();
-  const daysInMonth = getDaysInMonth(today.getFullYear(), today.getMonth());
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).getDay(); 
-
-  // Sovereign Week Starts Saturday (6)
-  const sovereignFirstDay = (firstDayOfMonth + 1) % 7;
-
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const blanks = Array.from({ length: sovereignFirstDay }, (_, i) => i);
+  // Memoizing calendar calculations to prevent layout shift lag during tab entry
+  const calendarData = useMemo(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfMonth = new Date(year, month, 1).getDay(); 
+    // Sovereign Week Starts Saturday (6)
+    const sovereignFirstDay = (firstDayOfMonth + 1) % 7;
+    
+    return {
+      days: Array.from({ length: daysInMonth }, (_, i) => i + 1),
+      blanks: Array.from({ length: sovereignFirstDay }, (_, i) => i),
+      monthName: today.toLocaleString('default', { month: 'long' }),
+      year
+    };
+  }, []);
 
   const selectedProgress = stats.history.find(h => h.date === selectedDate);
 
@@ -42,7 +46,7 @@ const HistoryLog: React.FC<Props> = ({ stats }) => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300 pb-12">
       <div className="bg-slate-800/40 p-6 rounded-3xl border border-slate-700 flex flex-col items-center">
         <div className="text-5xl font-oswald text-orange-500 tracking-widest mb-2">
           {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}
@@ -55,7 +59,7 @@ const HistoryLog: React.FC<Props> = ({ stats }) => {
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
         <div className="flex justify-between items-center mb-6">
           <h3 className="font-oswald text-xl text-white uppercase italic tracking-wider">Soul Records</h3>
-          <span className="text-xs text-orange-500 font-black uppercase tracking-widest">{today.toLocaleString('default', { month: 'long' })} cycle</span>
+          <span className="text-xs text-orange-500 font-black uppercase tracking-widest">{calendarData.monthName} cycle</span>
         </div>
         
         <div className="grid grid-cols-7 gap-2 text-center mb-2">
@@ -65,16 +69,16 @@ const HistoryLog: React.FC<Props> = ({ stats }) => {
         </div>
 
         <div className="grid grid-cols-7 gap-2">
-          {blanks.map(b => <div key={`b-${b}`} className="aspect-square" />)}
-          {days.map(d => {
-            const dateStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+          {calendarData.blanks.map(b => <div key={`b-${b}`} className="aspect-square" />)}
+          {calendarData.days.map(d => {
+            const dateStr = `${calendarData.year}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
             const isSelected = selectedDate === dateStr;
             return (
               <button
                 key={d}
                 onClick={() => setSelectedDate(dateStr)}
                 className={`aspect-square rounded-xl flex items-center justify-center text-xs font-bold transition-all relative ${getStatusColor(dateStr)} ${
-                  isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-950 scale-110 z-10' : 'hover:scale-105'
+                  isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-950 scale-110 z-10' : 'hover:scale-105 active:scale-90'
                 }`}
               >
                 {d}
@@ -110,7 +114,7 @@ const HistoryLog: React.FC<Props> = ({ stats }) => {
                       </div>
                       <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
                         <div 
-                          className={`h-full transition-all duration-1000 ${ex.isComplete ? 'bg-orange-500' : 'bg-orange-500/30'}`}
+                          className={`h-full transition-all duration-700 ${ex.isComplete ? 'bg-orange-500' : 'bg-orange-500/30'}`}
                           style={{ width: `${percent}%` }}
                         />
                       </div>

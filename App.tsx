@@ -31,6 +31,7 @@ const App: React.FC = () => {
 
   const [soullessTimeRemaining, setSoullessTimeRemaining] = useState<number | null>(null);
   const [isSoullessActive, setIsSoullessActive] = useState(false);
+  const [confirmingProtocol, setConfirmingProtocol] = useState<'soulless' | 'rest' | 'deactivate-soulless' | 'deactivate-rest' | null>(null);
 
   const statsRef = useRef(stats);
   useEffect(() => { statsRef.current = stats; }, [stats]);
@@ -73,6 +74,7 @@ const App: React.FC = () => {
       audioService.playDing();
       setActiveTab('workout');
     }
+    setConfirmingProtocol(null);
   };
 
   const toggleRestMode = () => {
@@ -87,6 +89,7 @@ const App: React.FC = () => {
       }
       return { ...prev, isRestDay: isNowRest };
     });
+    setConfirmingProtocol(null);
   };
 
   const initializeDay = useCallback((currentStats: UserStats) => {
@@ -180,8 +183,65 @@ const App: React.FC = () => {
     );
   }
 
+  // Confirmation Protocol Render
+  const renderConfirmation = () => {
+    if (!confirmingProtocol) return null;
+
+    const isSoullessAction = confirmingProtocol.includes('soulless');
+    const isDeactivate = confirmingProtocol.includes('deactivate');
+    const colorClass = isSoullessAction ? 'text-red-500' : 'text-blue-500';
+    const bgClass = isSoullessAction ? 'bg-red-600' : 'bg-blue-600';
+    const borderClass = isSoullessAction ? 'border-red-500/30' : 'border-blue-500/30';
+
+    return (
+      <div 
+        className="fixed inset-0 z-[1000] flex items-center justify-center p-6 backdrop-blur-xl bg-black/80 animate-in fade-in duration-300"
+        onClick={() => setConfirmingProtocol(null)}
+      >
+        <div 
+          className={`w-full max-w-sm bg-slate-950 border-2 ${borderClass} rounded-[40px] p-8 text-center shadow-2xl overflow-hidden relative`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+            <i className={`fa-solid ${isSoullessAction ? 'fa-skull' : 'fa-snowflake'} text-[300px]`}></i>
+          </div>
+
+          <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-6 border ${borderClass} bg-slate-900`}>
+            <i className={`fa-solid ${isSoullessAction ? 'fa-skull' : 'fa-snowflake'} text-3xl ${colorClass}`}></i>
+          </div>
+
+          <h3 className={`font-oswald text-3xl uppercase italic mb-3 tracking-widest ${colorClass}`}>
+            {isDeactivate ? 'Deactivate Protocol?' : 'Authorize Protocol?'}
+          </h3>
+
+          <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-8 leading-relaxed px-4">
+            {isSoullessAction 
+              ? (isDeactivate ? "Do you wish to return to the light? The shadows will await your return." : "Prepare for 2 hours of absolute suffering. No retreats. No excuses.") 
+              : (isDeactivate ? "Protocol complete. Re-engaging the forge for the Sovereign Soul." : "Initiate cellular repair and soul restoration. The system will enter stasis.")}
+          </p>
+
+          <div className="flex flex-col gap-3 relative z-10">
+            <button 
+              onClick={isSoullessAction ? toggleSoullessProtocol : toggleRestMode}
+              className={`w-full py-5 rounded-2xl font-oswald text-lg text-white uppercase italic tracking-widest shadow-xl transition-all active:scale-95 ${bgClass}`}
+            >
+              {isDeactivate ? 'DEACTIVATE' : 'AUTHORIZE'}
+            </button>
+            <button 
+              onClick={() => setConfirmingProtocol(null)}
+              className="w-full py-4 text-slate-500 font-black text-[10px] uppercase tracking-widest hover:text-white transition-colors"
+            >
+              ABORT OVERRIDE
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={`min-h-screen bg-black flex flex-col transition-colors duration-700 ${isSoullessActive ? 'soulless-mode' : ''} ${dailyProgress?.isRestDay ? 'rest-mode' : ''}`}>
+      {renderConfirmation()}
       <VisualEffects isSoulless={isSoullessActive} activationIcon={activationIcon} />
       
       <Header activeTab={activeTab} setActiveTab={setActiveTab} onExit={() => { if(confirm("Shutdown Sovereign System?")) setIsShuttingDown(true); }} />
@@ -212,7 +272,12 @@ const App: React.FC = () => {
                 <div className="text-center py-20 flex flex-col items-center">
                   <i className="fa-solid fa-couch text-5xl text-blue-500/20 mb-6"></i>
                   <h2 className="font-oswald text-3xl text-white uppercase italic mb-2">Soul Restoration</h2>
-                  <button onClick={toggleRestMode} className="mt-8 px-10 py-4 bg-blue-600/10 border border-blue-500/20 rounded-full text-[10px] font-black text-blue-500 uppercase">Re-Engage System</button>
+                  <button 
+                    onClick={() => setConfirmingProtocol('deactivate-rest')} 
+                    className="mt-8 px-10 py-4 bg-blue-600/10 border border-blue-500/20 rounded-full text-[10px] font-black text-blue-500 uppercase"
+                  >
+                    Re-Engage System
+                  </button>
                 </div>
               ) : (
                 <>
@@ -226,7 +291,7 @@ const App: React.FC = () => {
                     })}
                   </div>
                   <div className="flex justify-center pb-20">
-                    <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-orange-500 shadow-xl shadow-black/50 hover:bg-slate-800 active:scale-90 transition-all bounce-in">
+                    <button onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-orange-500 shadow-xl shadow-black/50 hover:bg-slate-800 active:scale-90 transition-all bounce-in">
                       <i className="fa-solid fa-arrow-up text-xl"></i>
                     </button>
                   </div>
@@ -239,9 +304,12 @@ const App: React.FC = () => {
 
       <footer className="fixed bottom-0 left-0 w-full bg-black/95 backdrop-blur-3xl border-t border-slate-900 pt-5 pb-8 px-6 z-50">
         <div className="max-w-md mx-auto flex items-center justify-around">
-          <button onClick={toggleSoullessProtocol} className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isSoullessActive ? 'text-red-500 scale-105' : activeTab === 'workout' ? 'text-orange-500' : 'text-slate-700'}`}>
+          <button 
+            onClick={() => setConfirmingProtocol(isSoullessActive ? 'deactivate-soulless' : 'soulless')} 
+            className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isSoullessActive ? 'text-red-400 scale-105' : activeTab === 'workout' ? 'text-orange-500' : 'text-slate-700'}`}
+          >
             <i className={`fa-solid ${isSoullessActive ? 'fa-skull' : 'fa-hand-fist'} text-2xl`}></i>
-            <span className="text-[9px] font-black uppercase tracking-widest">SOULLESS</span>
+            <span className={`text-[9px] font-black uppercase tracking-widest ${isSoullessActive ? 'text-red-400' : ''}`}>SOULLESS</span>
           </button>
           
           <div className="relative -mt-14">
@@ -250,9 +318,12 @@ const App: React.FC = () => {
             </button>
           </div>
 
-          <button onClick={toggleRestMode} className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${dailyProgress?.isRestDay ? 'text-blue-500' : 'text-slate-700'}`}>
-            <i className={`fa-solid ${dailyProgress?.isRestDay ? 'fa-couch' : 'fa-bed'} text-2xl`}></i>
-            <span className="text-[9px] font-black uppercase tracking-widest">REST</span>
+          <button 
+            onClick={() => setConfirmingProtocol(dailyProgress?.isRestDay ? 'deactivate-rest' : 'rest')} 
+            className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${dailyProgress?.isRestDay ? 'text-blue-400' : 'text-slate-700'}`}
+          >
+            <i className={`fa-solid ${dailyProgress?.isRestDay ? 'fa-snowflake' : 'fa-bed'} text-2xl`}></i>
+            <span className={`text-[9px] font-black uppercase tracking-widest ${dailyProgress?.isRestDay ? 'text-blue-400' : ''}`}>REST</span>
           </button>
         </div>
       </footer>
